@@ -37,7 +37,8 @@
     "eject": "react-scripts eject",
     "lint": "pnpm exec eslint \"src/**/*.{ts,tsx,js,jsx}\" --ext .ts,.tsx,.js,.jsx",
     "format": "pnpm exec prettier --write \"src/**/*.{ts,tsx,js,jsx,json,md}\"",
-    "typecheck": "pnpm exec tsc --noEmit"
+    "typecheck": "pnpm exec tsc --noEmit",
+    "prepare": "husky install"
   },
   "lint-staged": {
     "src/**/*.{ts,tsx,js,jsx,json,md}": [
