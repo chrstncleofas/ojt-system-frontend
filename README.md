@@ -2,19 +2,24 @@
 
 This is the React + TypeScript frontend for the OJT system. It uses Tailwind CSS and communicates with the backend API under `/api`.
 
-Prerequisites
-- Node.js 18+ and pnpm (preferred). If you don't have `pnpm` installed:
-   ```bash
-   npm install -g pnpm
-   ```
+## Prerequisites
 
-Quick start
+- Node.js 18+ and pnpm (preferred). If you don't have `pnpm` installed:
+  ```bash
+  npm install -g pnpm
+  ```
+
+## Quick Start
+
 1. Install dependencies:
    ```bash
    cd frontend
    pnpm install
    ```
-2. Create `.env.local` (if needed) and set API base URL or other env vars (the project may use `REACT_APP_API_URL` or similar in constants).
+2. Create `.env.local` (copy from `.env.local.example`) and set API base URL:
+   ```bash
+   cp .env.local.example .env.local
+   ```
 3. Run the dev server:
    ```bash
    pnpm start
@@ -23,43 +28,6 @@ Quick start
    ```bash
    pnpm build
    ```
-
-Notes
-- `.env.local` is ignored by `.gitignore` to avoid leaking secrets.
-- The registration page is at `/register` (see `src/pages/StudentRegister.tsx`). The frontend posts registration data to `/students/register` via the API client.
-
-Developer checks
-- Type checking (TypeScript):
-
-   ```bash
-   # runs the TypeScript compiler without emitting files
-   cd frontend
-   pnpm exec tsc --noEmit
-   ```
-
-- Linting (optional — install ESLint first):
-
-   ```bash
-   # install ESLint and TypeScript plugin (one-time)
-   cd frontend
-   pnpm add -D eslint @typescript-eslint/parser @typescript-eslint/eslint-plugin
-
-   # run lint (adjust glob to your src folder)
-   pnpm exec eslint "src/**/*.{ts,tsx}" --ext .ts,.tsx
-
-   # auto-fix simple issues
-   pnpm exec eslint "src/**/*.{ts,tsx}" --ext .ts,.tsx --fix
-   ```
-
-- Build (production):
-
-   ```bash
-   cd frontend
-   pnpm build
-   ```
-# OJT Management System - Frontend
-
-React + TypeScript frontend with Tailwind CSS for the OJT Management System.
 
 ## Features
 
@@ -75,8 +43,8 @@ React + TypeScript frontend with Tailwind CSS for the OJT Management System.
 
 - React 18.2
 - TypeScript 5.0
-- Tailwind CSS 3.x
-- React Router DOM 6.x
+- Tailwind CSS 4.x
+- React Router DOM 7.x
 - Axios
 - Lucide React
 
@@ -85,90 +53,105 @@ React + TypeScript frontend with Tailwind CSS for the OJT Management System.
 ```
 src/
 ├── components/        # Reusable components
-│   └── Layout.tsx    # Main layout with sidebar
-├── pages/            # Page components
+│   ├── Layout.tsx     # Main layout with sidebar
+│   └── ProtectedRoute.tsx
+├── composables/       # Custom hooks
+│   ├── useAuthComposable.ts
+│   └── useFetch.ts
+├── constants/         # App constants
+│   ├── api.ts
+│   └── messages.ts
+├── contexts/          # React contexts
+│   └── AuthContext.tsx
+├── dtos/              # Data Transfer Objects
+├── interfaces/        # TypeScript interfaces
+├── pages/             # Page components
 │   ├── Dashboard.tsx
 │   ├── Login.tsx
+│   ├── StudentRegister.tsx
 │   ├── Students.tsx
 │   ├── Announcements.tsx
 │   ├── TimeLogs.tsx
 │   └── Submissions.tsx
-├── services/         # API services
-│   ├── api.ts       # Axios instance & interceptors
+├── services/          # API services
+│   ├── api.ts         # Axios instance & interceptors
 │   ├── auth.service.ts
-│   └── student.service.ts
-├── App.tsx          # Route definitions
-├── index.tsx        # App entry point
-└── index.css        # Tailwind imports & custom styles
+│   ├── student.service.ts
+│   ├── submission.service.ts
+│   └── timelog.service.ts
+├── App.tsx            # Route definitions
+├── index.tsx          # App entry point
+└── index.css          # Tailwind imports & custom styles
 ```
 
-## Getting Started
+## Developer Workflow
 
-### Prerequisites
+### Code Quality Tools
 
-- Node.js 18+
-- pnpm (recommended) or npm
+This project uses **Husky** + **lint-staged** to automatically run checks on every commit:
 
-### Installation
+| Tool | Purpose |
+|------|---------|
+| **ESLint** | Linting & code quality |
+| **Prettier** | Code formatting |
+| **Husky** | Git hooks |
+| **lint-staged** | Run linters on staged files only |
+
+### Pre-commit Hook
+
+When you run `git commit`, the following happens automatically:
+1. **ESLint** checks and auto-fixes staged `.ts`, `.tsx`, `.js`, `.jsx` files
+2. **Prettier** formats staged files
+
+### Available Scripts
 
 ```bash
-# Install dependencies
-pnpm install
+# Development
+pnpm start          # Start dev server (port 3000)
 
-# Copy environment variables
-cp .env.example .env.local
+# Production
+pnpm build          # Build for production
 
-# Update .env.local with your backend URL
-REACT_APP_API_URL=http://localhost:3000/api
+# Code Quality
+pnpm lint           # Run ESLint on src/
+pnpm format         # Format all files with Prettier
+pnpm typecheck      # Run TypeScript compiler (no emit)
+
+# Testing
+pnpm test           # Run tests
 ```
 
-### Development
+### Manual Checks
 
 ```bash
-# Start development server (port 3001)
-pnpm start
+# Type checking
+pnpm typecheck
 
-# Build for production
-pnpm build
+# Lint all files
+pnpm lint
 
-# Run tests
-pnpm test
+# Format all files
+pnpm format
+
+# Full check before pushing
+pnpm typecheck && pnpm lint && pnpm build
 ```
 
-## Responsive Design
+## Configuration Files
 
-The application is fully responsive with breakpoints:
+| File | Purpose |
+|------|---------|
+| `eslint.config.js` | ESLint 9.x flat config |
+| `.prettierrc` | Prettier formatting rules |
+| `.prettierignore` | Files to skip formatting |
+| `tsconfig.json` | TypeScript configuration |
+| `tailwind.config.js` | Tailwind CSS configuration |
+| `.husky/pre-commit` | Pre-commit hook script |
 
-- **xs**: 475px (extra small devices)
-- **sm**: 640px (small devices)
-- **md**: 768px (tablets)
-- **lg**: 1024px (desktops)
-- **xl**: 1280px (large desktops)
-- **2xl**: 1536px (extra large screens)
-
-### Mobile Features
-
-- Collapsible sidebar with backdrop
-- Touch-friendly navigation
-- Card-based layouts for tables
-- Optimized typography and spacing
-- Responsive grid systems
-
-### Desktop Features
-
-- Persistent sidebar navigation
-- Table-based data views
-- Multi-column layouts
-- Hover states and tooltips
-
-## Tailwind Configuration
-
-Custom theme extensions in `tailwind.config.js`:
-
-- **Primary color palette** - Blue-based theme
-- **Custom scrollbar** - Thin, styled scrollbar
-- **Fade-in animation** - Smooth entrance animations
-- **Extra small breakpoint** - 475px for phones
+## Environment Variables
+| Variable | Description | Example |
+|----------|-------------|---------|
+| `REACT_APP_API_URL` | Backend API base URL | `http://localhost:3000/api` |
 
 ## API Integration
 
@@ -199,31 +182,15 @@ await studentService.create({ name: 'John Doe', ... });
 4. On 401 error, user redirected to login
 5. Protected routes check token presence
 
-## Environment Variables
+## Responsive Design
 
-- `REACT_APP_API_URL` - Backend API base URL
+The application is fully responsive with breakpoints:
 
-## Color Scheme
-
-Primary colors (customizable in `tailwind.config.js`):
-
-- **50-100**: Light backgrounds
-- **500-600**: Main action colors
-- **700-900**: Hover states, dark mode
-
-## Scripts
-
-- `pnpm start` - Start dev server
-- `pnpm build` - Production build
-- `pnpm test` - Run tests
-- `pnpm eject` - Eject from CRA (use with caution)
-
-## Browser Support
-
-- Chrome (latest)
-- Firefox (latest)
-- Safari (latest)
-- Edge (latest)
+- **sm**: 640px (small devices)
+- **md**: 768px (tablets)
+- **lg**: 1024px (desktops)
+- **xl**: 1280px (large desktops)
+- **2xl**: 1536px (extra large screens)
 
 ## Production Build
 
@@ -235,22 +202,11 @@ pnpm build
 # Deploy build/ to any static hosting (Netlify, Vercel, S3, etc.)
 ```
 
-## Docker Support
+## Notes
 
-Build frontend Docker image:
-
-```bash
-docker build -t ojt-frontend .
-docker run -p 80:80 ojt-frontend
-```
-
-## Contributing
-
-1. Follow TypeScript strict mode
-2. Use Tailwind utility classes (avoid custom CSS)
-3. Ensure mobile responsiveness
-4. Add proper TypeScript types
-5. Test on multiple screen sizes
+- `.env.local` is ignored by `.gitignore` to avoid leaking secrets.
+- The registration page is at `/register` (see `src/pages/StudentRegister.tsx`).
+- ESLint uses the new flat config format (ESLint 9.x).
 
 ## License
 
